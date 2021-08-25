@@ -14,12 +14,13 @@ width = 800
 screen = pygame.display.set_mode((width, height))
 
 # Background
-background = pygame.image.load('background.jpg')
+background = pygame.image.load('background.png')
 bg = pygame.transform.scale(background, (width, height))
 bgY_change = 0
+
 # Title and Icon
-pygame.display.set_caption("Fight Against Trashers")
-icon = pygame.image.load('trash.png')  # enemies
+pygame.display.set_caption("Fight Against Covid")
+icon = pygame.image.load('infected-2.png')  # enemies
 pygame.display.set_icon(icon)
 
 # Player
@@ -35,13 +36,10 @@ enemyX = []
 enemyY = []
 enemyX_change = []
 enemyY_change = []
-num_of_enemies = 6
-
-# font for Game Over
-over_font = pygame.font.Font('freesansbold.ttf', 64)
+num_of_enemies = 3
 
 for i in range(num_of_enemies):
-    enemyImg.append(pygame.image.load('trash64.png'))
+    enemyImg.append(pygame.image.load('infected-1.png'))
     enemyX.append(random.randint(0, 800))
     enemyY.append(random.randint(50, 150))
     enemyX_change.append(1)
@@ -53,14 +51,20 @@ font = pygame.font.Font('freesansbold.ttf', 32)
 textX = 10
 textY = 10
 
+# score
+score = 0
+score_font = pygame.font.Font('freesansbold.ttf', 32)
+scoreTextX = 10
+scoreTextY = 40
 
 def show_life(x, y):
     life_value = font.render("Lives: " + str(life), True, (255, 255, 255))
     screen.blit(life_value, (x, y))
 
-def GameOver_text():
-    over_text = over_font.render("Game Over", True, (255, 255, 255))
-    screen.blit(over_text, (100, 250))
+def show_score(x, y):
+    score_value = font.render("Score: " + str(score), True, (255, 255, 255))
+    screen.blit(score_value, (x, y))
+
 
 def player(x, y):
     screen.blit(playImg, (x, y))
@@ -72,7 +76,7 @@ def enemy(x, y, i):
 
 def isCollision(enemyX, enemyY, playerX, playerY):
     distance = math.sqrt((math.pow(enemyX - playerX, 2)) + math.pow(enemyY - playerY, 2))
-    if distance < 27:
+    if distance < 40:
         return True
     else:
         return False
@@ -81,6 +85,9 @@ def isCollision(enemyX, enemyY, playerX, playerY):
 # Game Loop
 running = True
 while running:
+
+    # Increase score consistently until game ends
+    score += 1
 
     # RGB = Red, Green, Blue
     screen.fill((0, 0, 0))
@@ -134,14 +141,6 @@ while running:
 
     # Enemy Movement
     for i in range(num_of_enemies):
-
-        #Game Over
-        if (enemyY[i] > 440 and life == 0):
-            for j in range(num_of_enemies):
-                enemyY[j] = 2000
-            GameOver_text()
-            break
-
         enemyX[i] += enemyX_change[i]
         if enemyX[i] <= 0:
             enemyX_change[i] = .5
@@ -157,11 +156,12 @@ while running:
             player_state = "ready"
             life -= 1
             print(life)
-            enemyX[i] = random.randint(0, 800)
-            enemyY[i] = random.randint(50, 150)
+            enemyX = random.randint(0, 800)
+            enemyY = random.randint(50, 150)
 
         enemy(enemyX[i], enemyY[i], i)
 
     player(playerX, playerY)
     show_life(textX, textY)
+    show_score(scoreTextX, scoreTextY)
     pygame.display.update()
