@@ -5,13 +5,17 @@ import random
 import math
 
 pygame.init()
+#dimensions 
+height = 600
+width = 800
 
 # create the screen
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((width, height))
 
 # Background
 background = pygame.image.load('background.jpg')
-
+bg = pygame.transform.scale(background, (width, height))
+bgY_change = 0
 # Title and Icon
 pygame.display.set_caption("Fight Against Trashers")
 icon = pygame.image.load('trash.png')  # enemies
@@ -64,7 +68,13 @@ while running:
     screen.fill((0, 0, 0))
 
     # Background Image
-    screen.blit(background, (0, 0))
+    screen.blit(background, (0, bgY_change))
+    screen.blit(background, (0, height + bgY_change))
+
+    if bgY_change == -height:
+        screen.blit(background, (0, height + bgY_change))
+        bgY_change = 0
+    bgY_change -= .8
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
