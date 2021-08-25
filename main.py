@@ -40,8 +40,8 @@ num_of_enemies = 3
 
 for i in range(num_of_enemies):
     enemyImg.append(pygame.image.load('infected-1.png'))
-    enemyX.append(random.randint(0, 800))
-    enemyY.append(random.randint(50, 150))
+    enemyX.append(random.randint(0, width))
+    enemyY.append(random.randint(50, height / 2))
     enemyX_change.append(1)
     enemyY_change.append(40)
 
@@ -141,7 +141,10 @@ while running:
 
     # Enemy Movement
     for i in range(num_of_enemies):
+        # Update horizontal position of enemy.
         enemyX[i] += enemyX_change[i]
+
+        # Update vertical position of enemy.
         if enemyX[i] <= 0:
             enemyX_change[i] = .5
             enemyY[i] += enemyY_change[i]
@@ -149,7 +152,18 @@ while running:
             enemyX_change[i] = -.5
             enemyY[i] += enemyY_change[i]
 
-        # Collision
+        # Respawn enemy if fallen off the screen. And add even more enemies.
+        if enemyY[i] > height + 32:  # TO-DO: Need to refactor to avoid hard-coding values throughout this file.
+            enemyY[i] = 0
+            if num_of_enemies < 16:
+                num_of_enemies += 1
+                enemyImg.append(pygame.image.load(f'infected-{random.randint(1, 4)}.png'))
+                enemyX.append(random.randint(0, width))
+                enemyY.append(0)
+                enemyX_change.append(random.randint(1, num_of_enemies))
+                enemyY_change.append(random.randint(40, 50))
+
+        # Collision check
         collision = isCollision(enemyX[i], enemyY[i], playerX, playerY)
         if collision:
             playerY = 480
