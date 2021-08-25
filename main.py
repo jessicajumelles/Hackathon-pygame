@@ -5,11 +5,12 @@ import random
 import math
 
 pygame.init()
-#dimensions 
+
+# Dimensions
 height = 600
 width = 800
 
-# create the screen
+# Create the screen
 screen = pygame.display.set_mode((width, height))
 
 # Background
@@ -21,7 +22,7 @@ pygame.display.set_caption("Fight Against Trashers")
 icon = pygame.image.load('trash.png')  # enemies
 pygame.display.set_icon(icon)
 
-# player
+# Player
 playImg = pygame.image.load('boy.png')
 playerX = 370
 playerY = 480
@@ -36,14 +37,24 @@ enemyX_change = []
 enemyY_change = []
 num_of_enemies = 6
 
-for i in range (num_of_enemies):
+for i in range(num_of_enemies):
     enemyImg.append(pygame.image.load('trash64.png'))
     enemyX.append(random.randint(0, 800))
     enemyY.append(random.randint(50, 150))
     enemyX_change.append(1)
     enemyY_change.append(40)
 
+# life
 life = 5
+font = pygame.font.Font('freesansbold.ttf', 32)
+textX = 10
+textY = 10
+
+
+def show_life(x, y):
+    life_value = font.render("Lives: " + str(life), True, (255, 255, 255))
+    screen.blit(life_value, (x, y))
+
 
 def player(x, y):
     screen.blit(playImg, (x, y))
@@ -60,21 +71,22 @@ def isCollision(enemyX, enemyY, playerX, playerY):
     else:
         return False
 
+
 # Game Loop
 running = True
 while running:
 
-     # RGB = Red, Green, Blue
-    screen.fill((0,0,0))
+    # RGB = Red, Green, Blue
+    screen.fill((0, 0, 0))
     # Background Image
     screen.blit(background, (0, bgY_change))
-    screen.blit(background, (0, height+bgY_change))
+    screen.blit(background, (0, height + bgY_change))
 
     if bgY_change == -height:
-      screen.blit(background, (0, height+bgY_change))
-      bgY_change = 0
+        screen.blit(background, (0, height + bgY_change))
+        bgY_change = 0
 
-    #use this variable to control how fast the background is scrolling
+    # use this variable to control how fast the background is scrolling
     bgY_change -= 1
 
     for event in pygame.event.get():
@@ -105,12 +117,14 @@ while running:
     playerX += playerX_change
     playerY += playerY_change
 
-    if playerX <= 0 or playerY <= 0:
+    if playerX <= 0:
         playerX = 0
-        playerY = 0
-    elif playerX >= 736 or playerY >= 736:
+    elif playerX >= 736:
         playerX = 736
-        playerY = 736
+    elif playerY <= 0:
+        playerY = 0
+    elif playerY >= 536:
+        playerY = 536
 
     # Enemy Movement
     for i in range(num_of_enemies):
@@ -123,7 +137,7 @@ while running:
             enemyY[i] += enemyY_change[i]
 
         # Collision
-        collision = isCollision(enemyX[i],enemyY[i],playerX,playerY)
+        collision = isCollision(enemyX[i], enemyY[i], playerX, playerY)
         if collision:
             playerY = 480
             player_state = "ready"
@@ -134,7 +148,6 @@ while running:
 
         enemy(enemyX[i], enemyY[i], i)
 
-
     player(playerX, playerY)
-
+    show_life(textX, textY)
     pygame.display.update()
