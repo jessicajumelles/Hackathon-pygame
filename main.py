@@ -37,6 +37,9 @@ enemyX_change = []
 enemyY_change = []
 num_of_enemies = 6
 
+# font for Game Over
+over_font = pygame.font.Font('freesansbold.ttf', 64)
+
 for i in range(num_of_enemies):
     enemyImg.append(pygame.image.load('trash64.png'))
     enemyX.append(random.randint(0, 800))
@@ -55,6 +58,9 @@ def show_life(x, y):
     life_value = font.render("Lives: " + str(life), True, (255, 255, 255))
     screen.blit(life_value, (x, y))
 
+def GameOver_text():
+    over_text = over_font.render("Game Over", True, (255, 255, 255))
+    screen.blit(over_text, (100, 250))
 
 def player(x, y):
     screen.blit(playImg, (x, y))
@@ -128,6 +134,14 @@ while running:
 
     # Enemy Movement
     for i in range(num_of_enemies):
+
+        #Game Over
+        if (enemyY[i] > 440 and life == 0):
+            for j in range(num_of_enemies):
+                enemyY[j] = 2000
+            GameOver_text()
+            break
+
         enemyX[i] += enemyX_change[i]
         if enemyX[i] <= 0:
             enemyX_change[i] = .5
@@ -143,8 +157,8 @@ while running:
             player_state = "ready"
             life -= 1
             print(life)
-            enemyX = random.randint(0, 800)
-            enemyY = random.randint(50, 150)
+            enemyX[i] = random.randint(0, 800)
+            enemyY[i] = random.randint(50, 150)
 
         enemy(enemyX[i], enemyY[i], i)
 
