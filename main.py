@@ -156,8 +156,8 @@ while running:
             player_state = "ready"
             life -= 1
             print(life)
-            enemyX = random.randint(0, 800)
-            enemyY = random.randint(50, 150)
+            enemyX[i] = random.randint(0, 800)
+            enemyY[i] = random.randint(50, 150)
 
         enemy(enemyX[i], enemyY[i], i)
 
