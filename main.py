@@ -64,17 +64,18 @@ def isCollision(enemyX, enemyY, playerX, playerY):
 running = True
 while running:
 
-    # RGB - Red, Green, Blue
-    screen.fill((0, 0, 0))
-
+     # RGB = Red, Green, Blue
+    screen.fill((0,0,0))
     # Background Image
     screen.blit(background, (0, bgY_change))
-    screen.blit(background, (0, height + bgY_change))
+    screen.blit(background, (0, height+bgY_change))
 
     if bgY_change == -height:
-        screen.blit(background, (0, height + bgY_change))
-        bgY_change = 0
-    bgY_change -= .8
+      screen.blit(background, (0, height+bgY_change))
+      bgY_change = 0
+
+    #use this variable to control how fast the background is scrolling
+    bgY_change -= 1
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
