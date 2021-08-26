@@ -93,7 +93,8 @@ running = True
 while running:
 
     # Increase score consistently until game ends
-    score += 1
+    if life > 0:
+        score += 1
 
     # RGB = Red, Green, Blue
     screen.fill((0, 0, 0))
