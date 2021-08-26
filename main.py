@@ -57,6 +57,9 @@ score_font = pygame.font.Font('freesansbold.ttf', 32)
 scoreTextX = 10
 scoreTextY = 40
 
+# font for Game Over
+over_font = pygame.font.Font('freesansbold.ttf', 64)
+
 def show_life(x, y):
     life_value = font.render("Lives: " + str(life), True, (255, 255, 255))
     screen.blit(life_value, (x, y))
@@ -65,6 +68,9 @@ def show_score(x, y):
     score_value = font.render("Score: " + str(score), True, (255, 255, 255))
     screen.blit(score_value, (x, y))
 
+def GameOver_text():
+    over_text = over_font.render("GAME OVER", True, (255, 255, 255))
+    screen.blit(over_text, (200, 250))
 
 def player(x, y):
     screen.blit(playImg, (x, y))
@@ -141,6 +147,13 @@ while running:
 
     # Enemy Movement
     for i in range(num_of_enemies):
+
+        #Game Over
+        if life ==0 :
+            for j in range(num_of_enemies):
+                enemyY[j] = 2000
+            GameOver_text()
+            break
         # Update horizontal position of enemy.
         enemyX[i] += enemyX_change[i]
 
