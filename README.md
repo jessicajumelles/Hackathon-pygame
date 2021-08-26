@@ -27,4 +27,4 @@ So you’ve got it running? Here’s how to play:
 Good luck!
 
 ### Screenshots
-[![Mid-game screenshot](https://i.postimg.cc/KcwY6hjv/Screenshot.webp)](https://postimg.cc/0rGxS37L)
+[![Mid-game screenshot](https://i.postimg.cc/KcwY6hjv/Screenshot.webp)](https://imgur.com/Vbx2gtj)
