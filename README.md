@@ -25,3 +25,6 @@ So you’ve got it running? Here’s how to play:
 3. Try to stay alive and rack up a high score. 🙂
 
 Good luck!
+
+### Screenshots
+[![Mid-game screenshot](https://i.postimg.cc/KcwY6hjv/Screenshot.webp)](https://postimg.cc/0rGxS37L)
