@@ -20,8 +20,8 @@ So you’ve got it running? Here’s how to play:
 
 1. The game will begin by spawning people randomly on the platform (including yourself).
 2. Your objective it to keep your distance, so use the arrow keys to help your character navigate the platform.
-    a. If you are touch by anyone, you lose a life.
-    b. If you manage to dodge them, more will come.
+   1. If you are touch by anyone, you lose a life.
+   2. If you manage to dodge them, more will come.
 3. Try to stay alive and rack up a high score. 🙂
 
 Good luck!
