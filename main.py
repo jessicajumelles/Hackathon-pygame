@@ -1,195 +1,212 @@
-from typing import List
-
-import pygame
-import random
 import math
+from random import randint
+import pygame
 
+###################################################### Constants ######################################################
+
+# Messages
+GAME_NAME = "Fight Against Covid"
+GAME_OVER_MESSAGE = "GAME OVER"
+
+# Assets
+GAME_ICON = "infected-2.png"
+BACKGROUND = "background.png"
+PLAYER = "boy.png"
+ENEMIES = [
+    "infected-1.png",
+    "infected-2.png",
+    "infected-3.png",
+    "infected-4.png"
+]
+
+# Dimensions and Positions
+VIEW_HEIGHT = 600
+VIEW_WIDTH = 800
+VIEW_SIZE = (VIEW_WIDTH, VIEW_HEIGHT)
+ENTITY_WIDTH = ENTITY_HEIGHT = 64
+LIVES_TEXT_POSITION = (10, 10)
+SCORE_TEXT_POSITION = (10, 40)
+
+# Settings
+INITIAL_ENEMY_COUNT = 2
+MAXIMUM_ENEMY_COUNT = 10
+INITIAL_LIVES = 5
+INITIAL_SCORE = 0
+BACKGROUND_COLOR = (0, 0, 0)  # Black
+FONT = ('freesansbold.ttf', 32)
+FONT_COLOR = (0, 0, 0)  # Black
+BACKGROUND_SCROLL_SPEED = 5
+PLAYER_MOVEMENT_SPEED = 5
+
+
+####################################################### Classes #######################################################
+
+class Vector:
+    def __init__(self, x=0, y=0):
+        self.x = x
+        self.y = y
+
+
+class GameEntity:
+    def __init__(self,
+                 sprite_path,
+                 position=None,
+                 movement_delta=None):
+        self.sprite = pygame.image.load(sprite_path)
+        self.position = Vector(randint(0, VIEW_WIDTH), randint(0, VIEW_HEIGHT // 4)) if position is None else position
+        self.movement_delta = Vector(randint(3, 6), randint(8, 64)) if movement_delta is None else movement_delta
+
+
+###################################################### Functions ######################################################
+
+def get_random_enemy_sprite():
+    return ENEMIES[randint(0, len(ENEMIES) - 1)]
+
+
+###################################################### Main Logic ######################################################
+
+# Initialize Pygame and settings dependent on Pygame being initialized first.
 pygame.init()
+font = pygame.font.Font(*FONT)
 
-# Dimensions
-height = 600
-width = 800
+# Create the window and set its properties.
+pygame.init()
+pygame.display.set_caption(GAME_NAME)
+pygame.display.set_icon(pygame.image.load(GAME_ICON))
 
-# Create the screen
-screen = pygame.display.set_mode((width, height))
+# Create the drawing surface and load the background image.
+surface = pygame.display.set_mode(VIEW_SIZE)
+background_image = pygame.image.load(BACKGROUND)
+background_offset = 0
 
-# Background
-background = pygame.image.load('background.png')
-bg = pygame.transform.scale(background, (width, height))
-bgY_change = 0
+# Create the player.
+player = GameEntity(PLAYER, Vector(VIEW_WIDTH // 2, VIEW_HEIGHT // 2), Vector())
+life = INITIAL_LIVES
+score = INITIAL_SCORE
 
-# Title and Icon
-pygame.display.set_caption("Fight Against Covid")
-icon = pygame.image.load('infected-2.png')  # enemies
-pygame.display.set_icon(icon)
-
-# Player
-playImg = pygame.image.load('boy.png')
-playerX = 370
-playerY = 480
-playerX_change = 0
-playerY_change = 0
-
-# Enemy
-enemyImg = []
-enemyX = []
-enemyY = []
-enemyX_change = []
-enemyY_change = []
-num_of_enemies = 3
-
-for i in range(num_of_enemies):
-    enemyImg.append(pygame.image.load('infected-1.png'))
-    enemyX.append(random.randint(0, width))
-    enemyY.append(random.randint(50, height / 2))
-    enemyX_change.append(1)
-    enemyY_change.append(40)
-
-# life
-life = 5
-font = pygame.font.Font('freesansbold.ttf', 32)
-textX = 10
-textY = 10
-
-# score
-score = 0
-score_font = pygame.font.Font('freesansbold.ttf', 32)
-scoreTextX = 10
-scoreTextY = 40
-
-# font for Game Over
-over_font = pygame.font.Font('freesansbold.ttf', 64)
-
-def show_life(x, y):
-    life_value = font.render("Lives: " + str(life), True, (255, 255, 255))
-    screen.blit(life_value, (x, y))
-
-def show_score(x, y):
-    score_value = font.render("Score: " + str(score), True, (255, 255, 255))
-    screen.blit(score_value, (x, y))
-
-def GameOver_text():
-    over_text = over_font.render("GAME OVER", True, (255, 255, 255))
-    screen.blit(over_text, (200, 250))
-
-def player(x, y):
-    screen.blit(playImg, (x, y))
+# Generate an initial set of random enemies.
+enemies = [GameEntity(get_random_enemy_sprite()) for _ in range(INITIAL_ENEMY_COUNT)]
 
 
-def enemy(x, y, i):
-    screen.blit(enemyImg[i], (x, y))
+#
+def is_collision(entity1, entity2):
+    distance = math.sqrt((entity1.position.x - entity2.position.x) ** 2 + (entity1.position.y - entity2.position.y) ** 2)
+    return distance < max(ENTITY_WIDTH, ENTITY_HEIGHT) // 2
 
 
-def isCollision(enemyX, enemyY, playerX, playerY):
-    distance = math.sqrt((math.pow(enemyX - playerX, 2)) + math.pow(enemyY - playerY, 2))
-    if distance < 40:
-        return True
+def draw_background():
+    global background_offset  # TO-DO: Encapsulate the game logic into a class.
+    surface.fill(BACKGROUND_COLOR)
+    surface.blit(background_image, (0, background_offset))
+    surface.blit(background_image, (0, VIEW_HEIGHT + background_offset))
+    if background_offset == -VIEW_HEIGHT:  # Tile the background so that it looks continuous.
+        surface.blit(background_image, (0, VIEW_HEIGHT + background_offset))
+        background_offset = 0
     else:
-        return False
+        background_offset -= BACKGROUND_SCROLL_SPEED  # Scroll the background.
+
+
+def draw_entity(entity):
+    surface.blit(entity.sprite, (entity.position.x, entity.position.y))
+
+
+def draw_player():
+    draw_entity(player)
+
+
+def draw_lives():
+    surface.blit(font.render(f"Lives: {life}", True, FONT_COLOR), LIVES_TEXT_POSITION)
+
+
+def draw_score():
+    surface.blit(font.render(f"Score: {score}", True, FONT_COLOR), SCORE_TEXT_POSITION)
+
+
+def draw_end_game():
+    rendered_message = font.render(GAME_OVER_MESSAGE, True, (255, 255, 255))
+    surface.blit(rendered_message, ((VIEW_WIDTH - rendered_message.get_width()) // 2, (VIEW_HEIGHT - rendered_message.get_height()) // 2))
 
 
 # Game Loop
+clock = pygame.time.Clock()
 running = True
+game_over = False
 while running:
+    if not game_over:
+        draw_background()
 
-    # Increase score consistently until game ends
-    if life > 0:
-        score += 1
-
-    # RGB = Red, Green, Blue
-    screen.fill((0, 0, 0))
-    # Background Image
-    screen.blit(background, (0, bgY_change))
-    screen.blit(background, (0, height + bgY_change))
-
-    if bgY_change == -height:
-        screen.blit(background, (0, height + bgY_change))
-        bgY_change = 0
-
-    # use this variable to control how fast the background is scrolling
-    bgY_change -= 1
-
+    # Handle events.
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        # if keystroke is pressed check whether it's right or left
+        # Update player’s character’s movements depending on the key press state.
         if event.type == pygame.KEYDOWN:
-
-            # sets event key to equal left and right keys
             if event.key == pygame.K_LEFT:
-                playerX_change = -0.5
-            if event.key == pygame.K_RIGHT:
-                playerX_change = 0.5
-            if event.key == pygame.K_UP:
-                playerY_change = -0.5
-            if event.key == pygame.K_DOWN:
-                playerY_change = 0.5
+                player.movement_delta.x = -PLAYER_MOVEMENT_SPEED
+            elif event.key == pygame.K_RIGHT:
+                player.movement_delta.x = PLAYER_MOVEMENT_SPEED
+            elif event.key == pygame.K_UP:
+                player.movement_delta.y = -PLAYER_MOVEMENT_SPEED
+            elif event.key == pygame.K_DOWN:
+                player.movement_delta.y = PLAYER_MOVEMENT_SPEED
+        elif event.type == pygame.KEYUP:
+            if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
+                player.movement_delta.x = 0
+            elif event.key in (pygame.K_UP, pygame.K_DOWN):
+                player.movement_delta.y = 0
 
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                playerX_change = 0
-            if event.key == pygame.KEYUP or event.key == pygame.K_DOWN:
-                playerY_change = 0
+    if not game_over:
+        # Update the player’s position.
+        player.position.x += player.movement_delta.x
+        player.position.y += player.movement_delta.y
 
-    # 5 = 5 + -0.1 -> 5 = 5- 0.1
-    # 5 = 5 + 0.1
-    playerX += playerX_change
-    playerY += playerY_change
+        if player.position.x <= 0:
+            player.position.x = 0
+        elif player.position.x >= VIEW_WIDTH - ENTITY_WIDTH:
+            player.position.x = VIEW_WIDTH - ENTITY_WIDTH
+        elif player.position.y <= 0:
+            player.position.y = 0
+        elif player.position.y >= VIEW_HEIGHT - ENTITY_HEIGHT:
+            player.position.y = VIEW_HEIGHT - ENTITY_HEIGHT
 
-    if playerX <= 0:
-        playerX = 0
-    elif playerX >= 736:
-        playerX = 736
-    elif playerY <= 0:
-        playerY = 0
-    elif playerY >= 536:
-        playerY = 536
+    # Update the enemies’ positions.
+    for enemy in enemies:
+        if not game_over:
+            # Update horizontal position of enemy.
+            enemy.position.x += enemy.movement_delta.x
 
-    # Enemy Movement
-    for i in range(num_of_enemies):
+            # Update vertical position of enemy.
+            if not 0 <= enemy.position.x <= VIEW_WIDTH - ENTITY_WIDTH:
+                enemy.movement_delta.x *= -1
+                enemy.position.y += enemy.movement_delta.y
 
-        #Game Over
-        if life ==0 :
-            for j in range(num_of_enemies):
-                enemyY[j] = 2000
-            GameOver_text()
-            break
-        # Update horizontal position of enemy.
-        enemyX[i] += enemyX_change[i]
+            # Respawn enemy if fallen off the screen. And add even more enemies.
+            if enemy.position.y > VIEW_HEIGHT:
+                enemy.position.y = 0
+                if len(enemies) < MAXIMUM_ENEMY_COUNT:
+                    enemies.append(GameEntity(get_random_enemy_sprite()))
 
-        # Update vertical position of enemy.
-        if enemyX[i] <= 0:
-            enemyX_change[i] = .5
-            enemyY[i] += enemyY_change[i]
-        elif enemyX[i] >= 736:
-            enemyX_change[i] = -.5
-            enemyY[i] += enemyY_change[i]
+            # Check for collision between the player and the enemy.
+            if is_collision(player, enemy):
+                player.position.y = VIEW_HEIGHT // 2
+                enemy.position.y = 0
+                life -= 1
+                if life < 1:
+                    game_over = True
 
-        # Respawn enemy if fallen off the screen. And add even more enemies.
-        if enemyY[i] > height + 32:  # TO-DO: Need to refactor to avoid hard-coding values throughout this file.
-            enemyY[i] = 0
-            if num_of_enemies < 16:
-                num_of_enemies += 1
-                enemyImg.append(pygame.image.load(f'infected-{random.randint(1, 4)}.png'))
-                enemyX.append(random.randint(0, width))
-                enemyY.append(0)
-                enemyX_change.append(random.randint(1, num_of_enemies))
-                enemyY_change.append(random.randint(40, 50))
+        draw_entity(enemy)
 
-        # Collision check
-        collision = isCollision(enemyX[i], enemyY[i], playerX, playerY)
-        if collision:
-            playerY = 480
-            player_state = "ready"
-            life -= 1
-            print(life)
-            enemyX[i] = random.randint(0, 800)
-            enemyY[i] = random.randint(50, 150)
+    # Increment the score a little bit for each frame while the game is not over. Otherwise, show “game over”.
+    if not game_over:
+        score += 1
+    else:
+        draw_end_game()
 
-        enemy(enemyX[i], enemyY[i], i)
+    draw_player()
+    draw_lives()
+    draw_score()
 
-    player(playerX, playerY)
-    show_life(textX, textY)
-    show_score(scoreTextX, scoreTextY)
     pygame.display.update()
+
+    clock.tick(60)
