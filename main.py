@@ -9,14 +9,14 @@ GAME_NAME = "Fight Against Covid"
 GAME_OVER_MESSAGE = "GAME OVER"
 
 # Assets
-GAME_ICON = "infected-2.png"
+GAME_ICON = "character.png"
 BACKGROUND = "background.png"
-PLAYER = "boy.png"
+PLAYER = "character.png"
 ENEMIES = [
-    "infected-1.png",
-    "infected-2.png",
-    "infected-3.png",
-    "infected-4.png"
+    "1.png",
+    "2.png",
+    "3.png",
+    "4.png"
 ]
 
 # Dimensions and Positions
