@@ -28,4 +28,7 @@ Good luck!
 
 ### Screenshots
 
-[![Fight for Covid](https://img.youtube.com/vi/upYPrEFGkrY&t=2s/0.jpg)](https://www.youtube.com/watch?v=upYPrEFGkrY&t=2s)
+![image alt text](https://www.youtube.com/watch?v=upYPrEFGkrY&t=2s)
+   [link text](https://www.youtube.com/watch?v=upYPrEFGkrY&t=2s)
+
+
