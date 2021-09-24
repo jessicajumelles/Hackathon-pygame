@@ -28,4 +28,4 @@ Good luck!
 
 ### Screenshots
 
-https://imgflip.com/gif/5o1ymw
+[![Fight for Covid](https://img.youtube.com/vi/upYPrEFGkrY&t=2s/0.jpg)](https://www.youtube.com/watch?v=upYPrEFGkrY&t=2s)
