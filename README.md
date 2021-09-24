@@ -26,9 +26,7 @@ So you’ve got it running? Here’s how to play:
 
 Good luck!
 
-### Screenshots
-
-![image alt text](https://www.youtube.com/watch?v=upYPrEFGkrY&t=2s)
-   [link text](https://www.youtube.com/watch?v=upYPrEFGkrY&t=2s)
+### Youtube Video 
+(https://www.youtube.com/watch?v=upYPrEFGkrY&t=2s)
 
 
